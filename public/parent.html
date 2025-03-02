@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script>
       const data = {
-        type: 'iframe',
+        type: 'spec',
         title: 'Contact Form',
         items: [{
           type: 'text',
@@ -23,6 +23,9 @@
           optValues: ['Option 1', 'Option 2', 'Option 3']
         }]
       };
+      window.addEventListener('message', (event) => {
+        console.log(event.data);
+      });
       window.onload = () => {        
         const iframe = document.getElementById('iframe');
         iframe.contentWindow.postMessage(data, window.origin);
