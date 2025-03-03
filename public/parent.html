@@ -8,17 +8,41 @@
         type: 'spec',
         title: 'Contact Form',
         items: [{
-          type: 'text',
-          title: 'Name'
+          type: 'display',
+          title: 'Instructions',
+          desc: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
         }, {
           type: 'text',
-          title: 'Email'
+          title: 'Text',
+          required: true,
+          desc: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
         }, {
           type: 'text',
-          title: 'Phone'
+          title: 'Long text',
+          required: true,
+          desc: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
+        }, {
+          type: 'checkbox',
+          title: 'Checkbox',
+          required: true,
+          optTexts: ['Option 1', 'Option 2', 'Option 3'],
+          optValues: ['Option 1', 'Option 2', 'Option 3'],
+        }, {
+          type: 'scale',
+          title: 'Scale with auto-next',
+          required: true,
+          optTexts: ['Never', 'Almost never', 'Sometimes', 'Almost always', 'Always'],
+          optValues: [1, 2, 3, 4, 5],
         }, {
           type: 'radio',
-          title: 'Test',
+          title: 'Radio with auto-next',
+          required: true,
+          optTexts: ['Option 1', 'Option 2', 'Option 3'],
+          optValues: ['Option 1', 'Option 2', 'Option 3']
+        }, {
+          type: 'radio',
+          title: 'Radio without auto-next',
+          required: true,
           optTexts: ['Option 1', 'Option 2', 'Option 3'],
           optValues: ['Option 1', 'Option 2', 'Option 3']
         }]
@@ -31,11 +55,17 @@
         iframe.contentWindow.postMessage(data, window.origin);
       };
     </script>
+    <style>
+      body {
+        font-family: Inter, 'Helvetica Neue', Helvetica, 'PingFang SC',
+          'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
+      }
+    </style>
   </head>
   <body>
     <iframe
       src="/index.html"
-      style="width: 100%; height: 100vh; border: none;"
+      style="width: 99vw; height: 95vh; border: none;"
       id="iframe"></iframe>
   </body>
 </html>

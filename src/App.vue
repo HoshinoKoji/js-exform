@@ -1,4 +1,7 @@
 <script>
+import { ElMessage } from 'element-plus';
+import { isProxy } from 'vue';
+
 /*
 * Specification of item data structure:
 * {
@@ -6,12 +9,12 @@
 *  title: string,
 *  optTexts: string[], // only for 'radio', 'checkbox', 'scale'
 *  optValues: string[], // only for 'radio', 'checkbox', 'scale'
-*  required: boolean, // optional, whether the user must answer the question, default is true
+*  required: boolean, // whether the user must answer the question
 *  answer: string, // user's answer, appended after user submits
 *  refilled: boolean, // whether the user refilled the answer, appended after user submits
 * }
 */
-const ITEM_TYPES = ['text', 'radio', 'checkbox', 'scale'];
+const ITEM_TYPES = ['text', 'radio', 'checkbox', 'scale', 'display'];
 function isValidItem({ type, title, optTexts, optValues = null }) {
   if (!title || !ITEM_TYPES.includes(type)) {
     return false;
@@ -31,13 +34,14 @@ export default {
       title: undefined,
       started: undefined,
       items: [],
-      currentTitle: undefined,
       currentIdx: undefined,
-      currentItem: undefined,
-      currentAnswer: undefined,
-      currentAnswerValue: undefined,
-      currentRefilled: false,
-      timestamp: undefined,
+      itemStatus: {
+        item: undefined,
+        timestamp: undefined,
+        title: undefined,
+        answer: undefined,
+        refilled: false,
+      },
       uiStatus: {
         backButtonDisabled: true,
         nextButtonText: 'Next',
@@ -67,7 +71,7 @@ export default {
   },
   computed: {
     isReady() {
-      return this.items && this.title;
+      return this.items && this.items.length > 0;
     },
   },
   methods: {
@@ -84,30 +88,45 @@ export default {
       }
     },
     updateTitle() {
-      this.currentTitle = this.currentItem ?
-        `${this.currentIdx + 1}. ${this.currentItem.title}` : '';
+      this.itemStatus.title = this.itemStatus.item ?
+        `${this.currentIdx + 1}. ${this.itemStatus.item.title}` : '';
     },
     updateItem() {
-      this.currentItem = this.items[this.currentIdx];
-      this.currentAnswer = this.items[this.currentIdx].answer;
-      this.currentRefilled = (this.currentItem.answer !== undefined);
-      this.timestamp = new Date().getTime();
+      this.itemStatus.item = this.items[this.currentIdx];
+      this.itemStatus.answer = this.items[this.currentIdx].answer;
+      this.itemStatus.refilled = (this.itemStatus.answer !== undefined);
+      this.itemStatus.timestamp = new Date().getTime();
       this.updateTitle();
       this.updateBackButton();
       this.updateNextButton();
     },
     iterOptions() {
-      return this.currentItem.optTexts.map((optText, index) => [
-        index,
-        optText,
-      ]);
+      return this.itemStatus.item.optTexts.map((optText, index) => [index, optText]);
     },
     clickNext() {
       const item = this.items[this.currentIdx];
-      item.answer = this.currentAnswer;
-      item.refilled = this.currentRefilled;
-      item.responseTime = new Date().getTime() - this.timestamp;
+      if (item.type !== 'display' && item.type !== 'checkbox' && item.required && this.itemStatus.answer === undefined) {
+        ElMessage({
+          message: 'This question is required.',
+          type: 'error',
+        });
+        return;
+      }
 
+      item.answer = this.itemStatus.answer;
+      item.refilled = this.itemStatus.refilled;
+      item.responseTime = new Date().getTime() - this.itemStatus.timestamp;
+      if (item.type === 'radio' && item.answer !== undefined) {
+        item.answerText = item.optTexts[item.answer];
+        item.answerValue = item.optValues[item.answer];
+      } else if (item.type === 'checkbox') {
+        item.answerText = item.answer.map(idx => item.optTexts[idx]).join(', ');
+        item.answerValue = item.answer.map(idx => item.optValues[idx]).join(', ');
+      } if (item.type === 'scale' && item.answer !== undefined) {
+        item.answerText = item.optTexts[item.answer - 1];
+        item.answerValue = item.optValues[item.answer - 1];
+      }
+      
       if (this.currentIdx === this.items.length - 1) {
         this.submit();
       } else {
@@ -116,7 +135,7 @@ export default {
       }
     },
     autoNext() {
-      if (this.currentIdx < this.items.length - 1) {
+      if (this.currentIdx < this.items.length - 1 && !this.itemStatus.refilled) {
         this.clickNext();
       }
     },
@@ -127,10 +146,13 @@ export default {
       }
     },
     submit() {
-      const results = this.items.map((item, index) => ({
-        index: index,
+      const results = this.items.map(item => ({
         title: item.title,
-        answer: item.answer || '',
+        key: item.key ? item.key : item.title,
+        type: item.type,
+        answer: isProxy(item.answer) ? [...item.answer] : (item.answer || 'null'),
+        answerText: isProxy(item.answerText) ? [...item.answerText] : (item.answerText || 'null'),
+        answerValue: isProxy(item.answerValue) ? [...item.answerValue] : (item.answerValue || 'null'),
         refilled: item.refilled,
         responseTime: item.responseTime,
       }));
@@ -152,54 +174,72 @@ export default {
 <template>
   <div v-if="!isReady">Loading...</div>
   <el-container id="main" v-if="isReady">
-    <el-header height=22pt id="display-title">{{ currentTitle }}</el-header>
-    <el-container id="display-desc" v-if="true">
-      <el-text class="mx-1" size="large">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-        incididunt ut
-        labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-        aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-        fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit
-        anim id est laborum.</el-text>
-    </el-container>
-    <el-main id="display-content">
-      <template v-if="currentItem.type === 'text'">
-        <el-input v-model="currentAnswer" autosize placeholder="Please input" />
-      </template>
-      <template v-else-if="currentItem.type === 'radio'">
-        <el-radio-group v-model="currentAnswer" v-for="[index, optText] in iterOptions()" :key="index"
-          @change="autoNext">
-          <el-radio-button :label="optText" :value="index" />
-        </el-radio-group>
-      </template>
+    <el-header height=24pt id="display-title">{{ itemStatus.title }}</el-header>
+    <el-main id="main-inner">
+      <el-container id="display-desc" v-if="itemStatus.item.desc">
+        <el-text class="mx-1" size="large"><span v-html="itemStatus.item.desc"></span></el-text>
+      </el-container>
+      
+      <el-main id="display-content" :class="{ nodesc: !itemStatus.item.desc }">
+        <template v-if="itemStatus.item.type === 'text'">
+          <el-input v-model="itemStatus.answer" @keyup.enter="clickNext" autosize autofocus
+            placeholder="Please input" />
+        </template>
+        <template v-else-if="itemStatus.item.type === 'radio'">
+          <el-radio-group v-model="itemStatus.answer" v-for="[index, optText] in iterOptions()" :key="index"
+            @change="autoNext">
+            <el-radio-button :label="optText" :value="index" />
+          </el-radio-group>
+        </template>
+        <template v-else-if="itemStatus.item.type === 'checkbox'">
+          <el-checkbox-group v-model="itemStatus.answer" v-for="[index, optText] in iterOptions()" :key="index">
+            <el-checkbox-button :label="optText" :value="index" />
+          </el-checkbox-group>
+        </template>
+        <template v-else-if="itemStatus.item.type === 'scale'">
+          <el-rate v-model="itemStatus.answer" :texts="itemStatus.item.optTexts"
+            show-text size="large" void-icon="ArrowRightBold"
+            :icons="['ArrowRightBold', 'ArrowRightBold', 'ArrowRightBold']"
+            @change="autoNext" />
+        </template>
+      </el-main>
+      
+      <el-footer id="display-buttons">
+        <el-button-group>
+          <el-button type="info" round :disabled="uiStatus.backButtonDisabled" @click="clickBack">
+            <el-icon class="el-icon--left">
+              <ArrowLeft />
+            </el-icon>Back
+          </el-button>
+          <el-button :type="uiStatus.nextButtonStatus" round @click="clickNext">
+            {{ uiStatus.nextButtonText }}<el-icon class="el-icon--right">
+              <ArrowRight />
+            </el-icon>
+          </el-button>
+        </el-button-group>
+      </el-footer>
     </el-main>
-    <el-footer id="display-buttons">
-      <el-button-group>
-        <el-button type="info" round :disabled="uiStatus.backButtonDisabled" @click="clickBack">
-          <el-icon class="el-icon--left">
-            <ArrowLeft />
-          </el-icon>Back
-        </el-button>
-        <el-button :type="uiStatus.nextButtonStatus" round @click="clickNext">
-          {{ uiStatus.nextButtonText }}<el-icon class="el-icon--right">
-            <ArrowRight />
-          </el-icon>
-        </el-button>
-      </el-button-group>
-    </el-footer>
   </el-container>
 </template>
 
 <style scoped>
 #main {
-  width: 50%;
+  width: 50vw;
+  max-height: 75vh;
+  overflow: hidden;
   background-color: #FAFCFF;
-  margin: 10% 25%;
+  margin: 12vh auto;
   padding-top: 4ex;
   padding-left: 2ex;
   padding-right: 2ex;
   border-radius: var(--el-border-radius-round);
   box-shadow: var(--el-box-shadow-dark);
   font-family: var(--el-font-family);
+}
+
+#main-inner {
+  margin-top: 0ex;
+  scrollbar-width: none;
 }
 
 #display-title {
@@ -210,8 +250,9 @@ export default {
 }
 
 #display-desc {
-  width: 90%;
-  margin: 1ex auto;
+  width: 95%;
+  margin: 0ex auto 0ex 2ex;
+  padding-top: 0ex;
 }
 
 #display-buttons {
@@ -219,11 +260,20 @@ export default {
 }
 
 #display-content {
-  padding-top: 1ex;
+  margin-top: 2ex;
+  padding-top: 0ex;
+}
+
+#display-content.nodesc {
+  margin-top: 0ex;
 }
 
 #display-content el-input {
   width: 100%;
   font-size: 16pt;
+}
+
+#display-content el-rate {
+  font-size: 24pt;
 }
 </style>
