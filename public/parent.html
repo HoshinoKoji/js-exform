@@ -48,7 +48,10 @@
         }]
       };
       window.addEventListener('message', (event) => {
-        console.log(event.data);
+        const elem = document.createElement('a');
+        elem.href = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(event.data));
+        elem.download = 'results.json';
+        elem.click();
       });
       window.onload = () => {        
         const iframe = document.getElementById('iframe');
@@ -64,7 +67,7 @@
   </head>
   <body>
     <iframe
-      src="/index.html"
+      src="index.html"
       style="width: 99vw; height: 95vh; border: none;"
       id="iframe"></iframe>
   </body>

@@ -162,10 +162,6 @@ export default {
         ended: new Date().getTime(),
         results
       }, window.origin);
-      const elem = document.createElement('a');
-      elem.href = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(results));
-      elem.download = 'results.json';
-      elem.click();
     }
   }
 }
