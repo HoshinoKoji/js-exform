@@ -50,6 +50,7 @@ export default {
       settings: {
         allowBack: true,
         allowAutoNext: true,
+        darkMode: false,
       },
     }
   },
@@ -62,6 +63,10 @@ export default {
         this.title = data.title;
         if (!this.items.every(item => isValidItem(item))) {
           throw new Error('Invalid item');
+        }
+
+        if (this.settings.darkMode) {
+          document.documentElement.classList.add('dark');
         }
 
         this.currentIdx = 0;
@@ -178,7 +183,9 @@ export default {
 <template>
   <div v-if="!isReady">Loading...</div>
   <el-container id="main" v-if="isReady">
-    <el-header height=24pt id="display-title">{{ itemStatus.title }}</el-header>
+    <el-header height=24pt>
+      <el-text class="mx-1" type="primary"><span id="display-title">{{ itemStatus.title }}</span></el-text>
+    </el-header>
     <el-main id="main-inner">
       <el-container id="display-desc" v-if="itemStatus.item.desc">
         <el-text class="mx-1" size="large"><span v-html="itemStatus.item.desc"></span></el-text>
@@ -240,7 +247,6 @@ export default {
   width: 50vw;
   max-height: 75vh;
   overflow: hidden;
-  background-color: #FAFCFF;
   margin: 12vh auto;
   padding-top: 4ex;
   padding-left: 2ex;
@@ -259,7 +265,6 @@ export default {
   text-align: left;
   font-size: 18pt;
   font-weight: bold;
-  color: rgb(51.2, 126.4, 204);
 }
 
 #display-desc {

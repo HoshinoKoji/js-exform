@@ -83,5 +83,9 @@
                 "Option 3"
             ]
         }
-    ]
+    ],
+    "settings": {
+        "autoNext": true,
+        "darkMode": false
+    }
 }
