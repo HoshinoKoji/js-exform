@@ -49,6 +49,7 @@ export default {
       },
       settings: {
         allowBack: true,
+        allowAutoNext: true,
       },
     }
   },
@@ -103,6 +104,13 @@ export default {
     iterOptions() {
       return this.itemStatus.item.optTexts.map((optText, index) => [index, optText]);
     },
+    getScaleMarks() {
+      const marks = {};
+      this.itemStatus.item.optTexts.forEach((optText, index) => {
+        marks[index] = (index === 0 || index === this.itemStatus.item.optTexts.length - 1) ? optText : '';
+      });
+      return marks;
+    },
     clickNext() {
       const item = this.items[this.currentIdx];
       if (item.type !== 'display' && item.type !== 'checkbox' && item.required && this.itemStatus.answer === undefined) {
@@ -123,10 +131,10 @@ export default {
         item.answerText = item.answer.map(idx => item.optTexts[idx]).join(', ');
         item.answerValue = item.answer.map(idx => item.optValues[idx]).join(', ');
       } if (item.type === 'scale' && item.answer !== undefined) {
-        item.answerText = item.optTexts[item.answer - 1];
-        item.answerValue = item.optValues[item.answer - 1];
+        item.answerText = item.optTexts[item.answer];
+        item.answerValue = item.optValues[item.answer];
       }
-      
+
       if (this.currentIdx === this.items.length - 1) {
         this.submit();
       } else {
@@ -135,7 +143,7 @@ export default {
       }
     },
     autoNext() {
-      if (this.currentIdx < this.items.length - 1 && !this.itemStatus.refilled) {
+      if (this.settings.allowAutoNext && this.currentIdx < this.items.length - 1 && !this.itemStatus.refilled) {
         this.clickNext();
       }
     },
@@ -175,7 +183,7 @@ export default {
       <el-container id="display-desc" v-if="itemStatus.item.desc">
         <el-text class="mx-1" size="large"><span v-html="itemStatus.item.desc"></span></el-text>
       </el-container>
-      
+
       <el-main id="display-content" :class="{ nodesc: !itemStatus.item.desc }">
         <template v-if="itemStatus.item.type === 'text'">
           <el-input v-model="itemStatus.answer" @keyup.enter="clickNext" autosize autofocus
@@ -193,13 +201,22 @@ export default {
           </el-checkbox-group>
         </template>
         <template v-else-if="itemStatus.item.type === 'scale'">
-          <el-rate v-model="itemStatus.answer" :texts="itemStatus.item.optTexts"
-            show-text size="large" void-icon="ArrowRightBold"
-            :icons="['ArrowRightBold', 'ArrowRightBold', 'ArrowRightBold']"
-            @change="autoNext" />
+          <el-row id="scale-row">
+          <el-col :span="4">
+            <el-text size="large" tag="b">{{ itemStatus.item.optTexts[0] }}</el-text>
+          </el-col>
+          <el-col :span="16">
+            <el-slider v-model="itemStatus.answer" size="small"
+              show-stops :min="0" :max="itemStatus.item.optTexts.length - 1"
+              :format-tooltip="val => itemStatus.item.optTexts[val]" @change="autoNext" />
+          </el-col>
+          <el-col :span="4">
+            <el-text size="large" tag="b">{{ itemStatus.item.optTexts[itemStatus.item.optTexts.length - 1] }}</el-text>
+          </el-col>
+          </el-row>
         </template>
       </el-main>
-      
+
       <el-footer id="display-buttons">
         <el-button-group>
           <el-button type="info" round :disabled="uiStatus.backButtonDisabled" @click="clickBack">
@@ -269,7 +286,8 @@ export default {
   font-size: 16pt;
 }
 
-#display-content el-rate {
-  font-size: 24pt;
+#display-content #scale-row {
+  text-align: center;
+  vertical-align: middle;
 }
 </style>
