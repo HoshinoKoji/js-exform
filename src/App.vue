@@ -1,6 +1,7 @@
 <script>
 import { ElMessage } from 'element-plus';
 import { isProxy } from 'vue';
+import lang from './lang.js';
 
 /*
 * Specification of item data structure:
@@ -44,14 +45,16 @@ export default {
       },
       uiStatus: {
         backButtonDisabled: true,
-        nextButtonText: 'Next',
+        nextButtonText: lang['en-US'].next,
         nextButtonStatus: 'primary',
       },
       settings: {
         allowBack: true,
         allowAutoNext: true,
         darkMode: false,
+        lang: 'en-US',
       },
+      lang,
     }
   },
   created() {
@@ -86,10 +89,10 @@ export default {
     },
     updateNextButton() {
       if (this.currentIdx === this.items.length - 1) {
-        this.uiStatus.nextButtonText = 'Submit';
+        this.uiStatus.nextButtonText = lang[this.settings.lang].submit;
         this.uiStatus.nextButtonStatus = 'success';
       } else {
-        this.uiStatus.nextButtonText = 'Next';
+        this.uiStatus.nextButtonText = lang[this.settings.lang].next;
         this.uiStatus.nextButtonStatus = 'primary';
       }
     },
@@ -120,7 +123,7 @@ export default {
       const item = this.items[this.currentIdx];
       if (item.type !== 'display' && item.type !== 'checkbox' && item.required && this.itemStatus.answer === undefined) {
         ElMessage({
-          message: 'This question is required.',
+          message: lang[this.settings.lang].required,
           type: 'error',
         });
         return;
@@ -194,7 +197,7 @@ export default {
       <el-main id="display-content" :class="{ nodesc: !itemStatus.item.desc }">
         <template v-if="itemStatus.item.type === 'text'">
           <el-input v-model="itemStatus.answer" @keyup.enter="clickNext" autosize autofocus
-            placeholder="Please input" />
+            :placeholder="lang[settings.lang].input" />
         </template>
         <template v-else-if="itemStatus.item.type === 'radio'">
           <el-radio-group v-model="itemStatus.answer" v-for="[index, optText] in iterOptions()" :key="index"
@@ -229,7 +232,7 @@ export default {
           <el-button type="info" round :disabled="uiStatus.backButtonDisabled" @click="clickBack">
             <el-icon class="el-icon--left">
               <ArrowLeft />
-            </el-icon>Back
+            </el-icon>{{ lang[settings.lang].back }}
           </el-button>
           <el-button :type="uiStatus.nextButtonStatus" round @click="clickNext">
             {{ uiStatus.nextButtonText }}<el-icon class="el-icon--right">
