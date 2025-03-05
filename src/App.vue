@@ -1,6 +1,7 @@
 <script>
 import { ElMessage } from 'element-plus';
 import { isProxy } from 'vue';
+import { sprintf } from 'sprintf-js';
 import lang from './lang.js';
 
 /*
@@ -35,6 +36,7 @@ export default {
       title: undefined,
       started: undefined,
       items: [],
+      showPanel: true,
       currentIdx: undefined,
       itemStatus: {
         item: undefined,
@@ -139,6 +141,7 @@ export default {
         }
       }
 
+      this.showPanel = false;
       item.answer = this.itemStatus.answer;
       item.refilled = this.itemStatus.refilled;
       item.responseTime = new Date().getTime() - this.itemStatus.timestamp;
@@ -156,8 +159,11 @@ export default {
       if (this.currentIdx === this.items.length - 1) {
         this.submit();
       } else {
-        this.currentIdx++;
-        this.updateItem();
+        setTimeout(() => {
+          this.currentIdx++;
+          this.updateItem();
+          this.showPanel = true;
+        }, 300);
       }
     },
     autoNext() {
@@ -195,7 +201,7 @@ export default {
 
 <template>
   <div v-if="!isReady">Loading...</div>
-  <el-container id="main" v-if="isReady">
+  <transition name="el-fade-in-linear"><el-container id="main" v-if="isReady" v-show="showPanel">
     <el-header height=24pt>
       <el-text class="mx-1" type="primary"><span id="display-title">{{ itemStatus.title }}</span></el-text>
     </el-header>
@@ -252,7 +258,7 @@ export default {
         </el-button-group>
       </el-footer>
     </el-main>
-  </el-container>
+  </el-container></transition>
 </template>
 
 <style scoped>
