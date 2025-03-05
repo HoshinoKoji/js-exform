@@ -177,14 +177,18 @@ export default {
         this.updateItem();
       }
     },
+    transformAnswer(answer) {
+      return isProxy(answer) ? [...answer]
+        : (answer === undefined ? null : answer);
+    },
     submit() {
       const results = this.items.map(item => ({
         title: item.title,
         key: item.key ? item.key : item.title,
         type: item.type,
-        answer: isProxy(item.answer) ? [...item.answer] : (item.answer || null),
-        answerText: isProxy(item.answerText) ? [...item.answerText] : (item.answerText || null),
-        answerValue: isProxy(item.answerValue) ? [...item.answerValue] : (item.answerValue || null),
+        answer: this.transformAnswer(item.answer),
+        answerText: this.transformAnswer(item.answerText),
+        answerValue: this.transformAnswer(item.answerValue),
         refilled: item.refilled,
         responseTime: item.responseTime,
       }));
@@ -216,14 +220,13 @@ export default {
             :placeholder="lang[settings.lang].input" />
         </template>
         <template v-else-if="itemStatus.item.type === 'radio'">
-          <el-radio-group v-model="itemStatus.answer" v-for="[index, optText] in iterOptions()" :key="index"
-            @change="autoNext">
-            <el-radio-button :label="optText" :value="index" />
+          <el-radio-group v-model="itemStatus.answer" @change="autoNext">
+            <el-radio-button v-for="[index, optText] in iterOptions()" :key="index" :label="optText" :value="index" />
           </el-radio-group>
         </template>
         <template v-else-if="itemStatus.item.type === 'checkbox'">
-          <el-checkbox-group v-model="itemStatus.answer" v-for="[index, optText] in iterOptions()" :key="index">
-            <el-checkbox-button :label="optText" :value="index" />
+          <el-checkbox-group v-model="itemStatus.answer">
+            <el-checkbox-button v-for="[index, optText] in iterOptions()" :key="index" :label="optText" :value="index" />
           </el-checkbox-group>
         </template>
         <template v-else-if="itemStatus.item.type === 'scale'">
