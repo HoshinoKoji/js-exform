@@ -127,6 +127,16 @@ export default {
           type: 'error',
         });
         return;
+      } else if (item.type === 'checkbox' && item.required) {
+        this.itemStatus.answer = this.itemStatus.answer === undefined ? [] : this.itemStatus.answer;
+        const { minOpts, maxOpts } = Object.assign({ minOpts: 1, maxOpts: item.optTexts.length }, item);
+        if (this.itemStatus.answer.length < minOpts || this.itemStatus.answer.length > maxOpts) {
+          ElMessage({
+            message: sprintf(lang[this.settings.lang].checkboxOutOfRange, minOpts, maxOpts),
+            type: 'error',
+          });
+          return;
+        }
       }
 
       item.answer = this.itemStatus.answer;

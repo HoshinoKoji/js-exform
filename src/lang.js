@@ -6,6 +6,7 @@ export default {
         'loading': 'Loading...',
         'input': 'Please input',
         'required': 'This field is required',
+        'checkboxOutOfRange': 'Please select at least %d and at most %d option(s)',
     },
     'zh-CN': {
         'submit': '提交',
@@ -14,5 +15,6 @@ export default {
         'loading': '加载中...',
         'input': '请输入',
         'required': '此字段不能为空',
+        'checkboxOutOfRange': '请选择 %d 到 %d 个选项',
     },
 }
