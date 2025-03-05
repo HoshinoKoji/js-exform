@@ -205,7 +205,7 @@ export default {
 
 <template>
   <div v-if="!isReady">Loading...</div>
-  <transition name="el-fade-in-linear"><el-container id="main" v-if="isReady" v-show="showPanel">
+  <transition name="el-fade-in"><el-container id="main" v-if="isReady" v-show="showPanel">
     <el-header height=24pt>
       <el-text class="mx-1" type="primary"><span id="display-title">{{ itemStatus.title }}</span></el-text>
     </el-header>
