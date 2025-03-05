@@ -4,18 +4,6 @@ import { isProxy } from 'vue';
 import { sprintf } from 'sprintf-js';
 import lang from './lang.js';
 
-/*
-* Specification of item data structure:
-* {
-*  type: string, // 'text', 'radio', 'checkbox', 'scale'
-*  title: string,
-*  optTexts: string[], // only for 'radio', 'checkbox', 'scale'
-*  optValues: string[], // only for 'radio', 'checkbox', 'scale'
-*  required: boolean, // whether the user must answer the question
-*  answer: string, // user's answer, appended after user submits
-*  refilled: boolean, // whether the user refilled the answer, appended after user submits
-* }
-*/
 const ITEM_TYPES = ['text', 'radio', 'checkbox', 'scale', 'display'];
 function isValidItem({ type, title, optTexts, optValues = null }) {
   if (!title || !ITEM_TYPES.includes(type)) {
