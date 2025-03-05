@@ -136,8 +136,8 @@ export default {
         item.answerText = item.optTexts[item.answer];
         item.answerValue = item.optValues[item.answer];
       } else if (item.type === 'checkbox') {
-        item.answerText = item.answer.map(idx => item.optTexts[idx]).join(', ');
-        item.answerValue = item.answer.map(idx => item.optValues[idx]).join(', ');
+        item.answerText = item.answer? item.answer.map(idx => item.optTexts[idx]).join(', ') : null;
+        item.answerValue = item.answer? item.answer.map(idx => item.optValues[idx]).join(', ') : null;
       } if (item.type === 'scale' && item.answer !== undefined) {
         item.answerText = item.optTexts[item.answer];
         item.answerValue = item.optValues[item.answer];
@@ -166,9 +166,9 @@ export default {
         title: item.title,
         key: item.key ? item.key : item.title,
         type: item.type,
-        answer: isProxy(item.answer) ? [...item.answer] : (item.answer || 'null'),
-        answerText: isProxy(item.answerText) ? [...item.answerText] : (item.answerText || 'null'),
-        answerValue: isProxy(item.answerValue) ? [...item.answerValue] : (item.answerValue || 'null'),
+        answer: isProxy(item.answer) ? [...item.answer] : (item.answer || null),
+        answerText: isProxy(item.answerText) ? [...item.answerText] : (item.answerText || null),
+        answerValue: isProxy(item.answerValue) ? [...item.answerValue] : (item.answerValue || null),
         refilled: item.refilled,
         responseTime: item.responseTime,
       }));
