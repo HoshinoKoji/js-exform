@@ -42,6 +42,7 @@ export default {
         allowBack: true,
         allowAutoNext: true,
         darkMode: false,
+        showItemIndex: true,
         lang: 'en-US',
       },
       lang,
@@ -87,8 +88,8 @@ export default {
       }
     },
     updateTitle() {
-      this.itemStatus.title = this.itemStatus.item ?
-        `${this.currentIdx + 1}. ${this.itemStatus.item.title}` : '';
+      const prefix = this.settings.showItemIndex ? `${this.currentIdx + 1}. ` : '';
+      this.itemStatus.title = this.itemStatus.item ? `${prefix}${this.itemStatus.item.title}` : '';
     },
     updateItem() {
       this.itemStatus.item = this.items[this.currentIdx];
