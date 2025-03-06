@@ -72,6 +72,7 @@ Each item in the `items` array represents a question with the following structur
   allowBack: true,       // Allow navigation to previous questions
   allowAutoNext: true,   // Auto-advance after selection for radio/scale
   darkMode: false,       // Visual theme
+  showItemIndex: true,   // Show item index in the header
   lang: 'en-US'          // Language code
 }
 ```
@@ -113,7 +114,7 @@ When the questionnaire is completed, the component sends a message to the parent
 
 Please refer to source code of demo files.
 
-## For developers
+## For Developers
 
 To modify or build the component, simply follow the standard routine:
 
