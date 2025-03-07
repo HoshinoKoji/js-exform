@@ -115,9 +115,45 @@ When the questionnaire is completed, the component sends a message to the parent
 }
 ```
 
-## Examples
+## Standalone Examples
 
 Please refer to source code of demo files.
+
+## Usage in PsychoJS experiments
+
+To embed questionnaires in a PsychoJS experiment managed by PsychoPy Builder, you are required to create a custom code component in the `Begin Routine` section, basically following the steps:
+1. Create the `<iframe>` element
+2. Load questionnaire specification file, either from a constant string or external file
+3. Add styling to make it hover
+4. Send data to start up when it is ready
+5. Append the element to the main document
+6. Handle response data and remove the element once finished
+
+Here is an example:
+
+```javascript
+function embedQuestionnaire() {
+    const iframe = document.createElement('iframe');
+    const spec = JSON.parse(psychoJS.serverManager.getResource('spec.json.txt')); // Use preloaded resource here
+    const src = 'https://js-exform.pages.dev'; // Or replace it with your own build
+    iframe.id = 'iframe';
+    iframe.style = 'width: 100%; height: 100%; border: none; position: absolute; top: 0; left: 0;';
+    iframe.onload = () => { iframe.contentWindow.postMessage(spec, src); };
+    iframe.src = src;
+    document.body.append(iframe);
+    window.addEventListener('message', (event) => {
+        // Handle event.data to proceed
+        // ......
+        iframe.remove();
+    });
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', embedQuestionnaire);
+} else {
+  embedQuestionnaire();
+}
+```
 
 ## For Developers
 
