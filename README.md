@@ -22,6 +22,8 @@ window.postMessage({
 }, '*');
 ```
 
+**Security Note:** When using postMessage in production, always specify an exact target origin instead of '*' to prevent potential cross-site scripting vulnerabilities. The component uses the `settings.origin` property for sending responses back to ensure proper security.
+
 ## Input Schema
 
 ### Root Object
@@ -47,7 +49,8 @@ Each item in the `items` array represents a question with the following structur
   optValues: ['value1', 'value2'], // For 'radio', 'checkbox', 'scale'
   required: true, // Whether answer is required
   minOpts: 1, // For 'checkbox', minimum options to select
-  maxOpts: 3  // For 'checkbox', maximum options to select
+  maxOpts: 3,  // For 'checkbox', maximum options to select
+  allowBack: true // Override global back button setting for this item
 }
 ```
 
@@ -64,6 +67,7 @@ Each item in the `items` array represents a question with the following structur
 | required | boolean | No | Whether an answer is required (default: false) |
 | minOpts | number | No | Minimum options to select for 'checkbox' (default: 1) |
 | maxOpts | number | No | Maximum options to select for 'checkbox' (default: total options) |
+| allowBack | boolean | No | Override global back button setting for this specific item, useful for splitting the survey into sections |
 
 ### Settings Object
 

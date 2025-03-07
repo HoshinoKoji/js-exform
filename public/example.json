@@ -11,7 +11,8 @@
             "type": "text",
             "title": "Text",
             "required": true,
-            "desc": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+            "desc": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+            "allowBack": false
         },
         {
             "type": "text",

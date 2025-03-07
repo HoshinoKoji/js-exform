@@ -77,7 +77,9 @@ export default {
   },
   methods: {
     updateBackButton() {
-      this.uiStatus.backButtonDisabled = !this.settings.allowBack || (this.currentIdx === 0);
+      const itemAllowBack = this.items[this.currentIdx].allowBack === undefined ?
+        this.settings.allowBack : this.items[this.currentIdx].allowBack;
+      this.uiStatus.backButtonDisabled = !itemAllowBack || (this.currentIdx === 0);
     },
     updateNextButton() {
       if (this.currentIdx === this.items.length - 1) {
