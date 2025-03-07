@@ -43,6 +43,7 @@ export default {
         allowAutoNext: true,
         darkMode: false,
         showItemIndex: true,
+        origin: '*',
         lang: 'en-US',
       },
       lang,
@@ -186,7 +187,7 @@ export default {
         started: this.started,
         ended: new Date().getTime(),
         results
-      }, window.origin);
+      }, this.settings.origin);
     }
   }
 }
