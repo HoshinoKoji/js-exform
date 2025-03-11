@@ -1,5 +1,7 @@
 ## Introduction
 
+[![Node.js CI](https://github.com/HoshinoKoji/js-exform/actions/workflows/node.js.yml/badge.svg)](https://github.com/HoshinoKoji/js-exform/actions/workflows/node.js.yml)
+
 This project is to develop a Vue 3 single page questionnaire application to be embedded in online psychology experiments. Demo pages are hosted to show how it looks like:
 - [Standard](https://js-exform.pages.dev/demo)
 - [Dark mode](https://js-exform.pages.dev/demo-dark)
