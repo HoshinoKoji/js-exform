@@ -141,8 +141,8 @@ export default {
         item.answerText = item.optTexts[item.answer];
         item.answerValue = item.optValues[item.answer];
       } else if (item.type === 'checkbox') {
-        item.answerText = item.answer? item.answer.map(idx => item.optTexts[idx]).join(', ') : null;
-        item.answerValue = item.answer? item.answer.map(idx => item.optValues[idx]).join(', ') : null;
+        item.answerText = item.answer ? item.answer.map(idx => item.optTexts[idx]).join(', ') : null;
+        item.answerValue = item.answer ? item.answer.map(idx => item.optValues[idx]).join(', ') : null;
       } if (item.type === 'scale' && item.answer !== undefined) {
         item.answerText = item.optTexts[item.answer];
         item.answerValue = item.optValues[item.answer];
@@ -197,63 +197,67 @@ export default {
 
 <template>
   <div v-if="!isReady">Loading...</div>
-  <transition name="el-fade-in"><el-container id="main" v-if="isReady" v-show="showPanel">
-    <el-header height=24pt>
-      <el-text class="mx-1" type="primary"><span id="display-title">{{ itemStatus.title }}</span></el-text>
-    </el-header>
-    <el-main id="main-inner">
-      <el-container id="display-desc" v-if="itemStatus.item.desc">
-        <el-text class="mx-1" size="large"><span v-html="itemStatus.item.desc"></span></el-text>
-      </el-container>
+  <transition name="el-fade-in">
+    <el-container id="main" direction="vertical" v-if="isReady" v-show="showPanel">
+      <div style="padding-left: 12pt;">
+        <el-text class="mx-1" type="primary"><span id="display-title">{{ itemStatus.title }}</span></el-text>
+      </div>
+      <el-main id="main-inner">
+        <el-container id="display-desc" v-if="itemStatus.item.desc">
+          <el-text class="mx-1" size="large"><span v-html="itemStatus.item.desc"></span></el-text>
+        </el-container>
 
-      <el-main id="display-content" :class="{ nodesc: !itemStatus.item.desc }">
-        <template v-if="itemStatus.item.type === 'text'">
-          <el-input v-model="itemStatus.answer" @keyup.enter="clickNext" autosize autofocus
-            :placeholder="lang[settings.lang].input" />
-        </template>
-        <template v-else-if="itemStatus.item.type === 'radio'">
-          <el-radio-group v-model="itemStatus.answer" @change="autoNext">
-            <el-radio-button v-for="[index, optText] in iterOptions()" :key="index" :label="optText" :value="index" />
-          </el-radio-group>
-        </template>
-        <template v-else-if="itemStatus.item.type === 'checkbox'">
-          <el-checkbox-group v-model="itemStatus.answer">
-            <el-checkbox-button v-for="[index, optText] in iterOptions()" :key="index" :label="optText" :value="index" />
-          </el-checkbox-group>
-        </template>
-        <template v-else-if="itemStatus.item.type === 'scale'">
-          <el-row id="scale-row">
-          <el-col :span="4">
-            <el-text size="large" tag="b">{{ itemStatus.item.optTexts[0] }}</el-text>
-          </el-col>
-          <el-col :span="16">
-            <el-slider v-model="itemStatus.answer" size="small"
-              show-stops :min="0" :max="itemStatus.item.optTexts.length - 1"
-              :format-tooltip="val => itemStatus.item.optTexts[val]" @change="autoNext" />
-          </el-col>
-          <el-col :span="4">
-            <el-text size="large" tag="b">{{ itemStatus.item.optTexts[itemStatus.item.optTexts.length - 1] }}</el-text>
-          </el-col>
-          </el-row>
-        </template>
+        <el-main id="display-content" :class="{ nodesc: !itemStatus.item.desc }">
+          <template v-if="itemStatus.item.type === 'text'">
+            <el-input v-model="itemStatus.answer" @keyup.enter="clickNext" autosize autofocus
+              :placeholder="lang[settings.lang].input" />
+          </template>
+          <template v-else-if="itemStatus.item.type === 'radio'">
+            <el-radio-group v-model="itemStatus.answer" @change="autoNext">
+              <el-radio-button v-for="[index, optText] in iterOptions()" :key="index" :label="optText" :value="index" />
+            </el-radio-group>
+          </template>
+          <template v-else-if="itemStatus.item.type === 'checkbox'">
+            <el-checkbox-group v-model="itemStatus.answer">
+              <el-checkbox-button v-for="[index, optText] in iterOptions()" :key="index" :label="optText"
+                :value="index" />
+            </el-checkbox-group>
+          </template>
+          <template v-else-if="itemStatus.item.type === 'scale'">
+            <el-row id="scale-row">
+              <el-col :span="4">
+                <el-text size="large" tag="b">{{ itemStatus.item.optTexts[0] }}</el-text>
+              </el-col>
+              <el-col :span="16">
+                <el-slider v-model="itemStatus.answer" size="small" show-stops :min="0"
+                  :max="itemStatus.item.optTexts.length - 1" :format-tooltip="val => itemStatus.item.optTexts[val]"
+                  @change="autoNext" />
+              </el-col>
+              <el-col :span="4">
+                <el-text size="large" tag="b">{{ itemStatus.item.optTexts[itemStatus.item.optTexts.length - 1]
+                  }}</el-text>
+              </el-col>
+            </el-row>
+          </template>
+        </el-main>
+
+        <el-footer id="display-buttons">
+          <el-button-group>
+            <el-button type="info" round :disabled="uiStatus.backButtonDisabled" @click="clickBack">
+              <el-icon class="el-icon--left">
+                <ArrowLeft />
+              </el-icon>{{ lang[settings.lang].back }}
+            </el-button>
+            <el-button :type="uiStatus.nextButtonStatus" round @click="clickNext">
+              {{ uiStatus.nextButtonText }}<el-icon class="el-icon--right">
+                <ArrowRight />
+              </el-icon>
+            </el-button>
+          </el-button-group>
+        </el-footer>
       </el-main>
-
-      <el-footer id="display-buttons">
-        <el-button-group>
-          <el-button type="info" round :disabled="uiStatus.backButtonDisabled" @click="clickBack">
-            <el-icon class="el-icon--left">
-              <ArrowLeft />
-            </el-icon>{{ lang[settings.lang].back }}
-          </el-button>
-          <el-button :type="uiStatus.nextButtonStatus" round @click="clickNext">
-            {{ uiStatus.nextButtonText }}<el-icon class="el-icon--right">
-              <ArrowRight />
-            </el-icon>
-          </el-button>
-        </el-button-group>
-      </el-footer>
-    </el-main>
-  </el-container></transition>
+    </el-container>
+  </transition>
 </template>
 
 <style scoped>
@@ -272,6 +276,7 @@ export default {
 
 #main-inner {
   margin-top: 0ex;
+  padding-left: 16pt;
   scrollbar-width: none;
 }
 
