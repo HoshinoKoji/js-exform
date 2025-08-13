@@ -114,6 +114,12 @@ export default {
       return marks;
     },
     clickNext() {
+      // Last update still in progress
+      if (!this.showPanel) {
+        return;
+      }
+
+      // Validation
       const item = this.items[this.currentIdx];
       if (item.type !== 'display' && item.type !== 'checkbox' && item.required && this.itemStatus.answer === undefined) {
         ElMessage({
