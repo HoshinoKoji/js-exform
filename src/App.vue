@@ -109,7 +109,10 @@ export default {
       this.updateTitle();
       this.updateBackButton();
       this.updateNextButton();
-      document.getElementById('main-inner').scrollTop = 0;
+      const mainInner = document.getElementById('main-inner');
+      if (mainInner) {
+        mainInner.scrollTop = 0;
+      }
     },
 
     iterOptions() {
