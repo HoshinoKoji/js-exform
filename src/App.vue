@@ -42,6 +42,7 @@ export default {
         allowBack: true,
         allowAutoNext: true,
         darkMode: false,
+        itemInterval: 250,
         showItemIndex: true,
         origin: '*',
         lang: 'en-US',
@@ -49,6 +50,7 @@ export default {
       lang,
     }
   },
+
   created() {
     window.addEventListener('message', (event) => {
       const data = event.data;
@@ -70,17 +72,20 @@ export default {
       }
     });
   },
+
   computed: {
     isReady() {
       return this.items && this.items.length > 0;
     },
   },
+
   methods: {
     updateBackButton() {
       const itemAllowBack = this.items[this.currentIdx].allowBack === undefined ?
         this.settings.allowBack : this.items[this.currentIdx].allowBack;
       this.uiStatus.backButtonDisabled = !itemAllowBack || (this.currentIdx === 0);
     },
+
     updateNextButton() {
       if (this.currentIdx === this.items.length - 1) {
         this.uiStatus.nextButtonText = lang[this.settings.lang].submit;
@@ -90,10 +95,12 @@ export default {
         this.uiStatus.nextButtonStatus = 'primary';
       }
     },
+
     updateTitle() {
       const prefix = this.settings.showItemIndex ? `${this.currentIdx + 1}. ` : '';
       this.itemStatus.title = this.itemStatus.item ? `${prefix}${this.itemStatus.item.title}` : '';
     },
+
     updateItem() {
       this.itemStatus.item = this.items[this.currentIdx];
       this.itemStatus.answer = this.items[this.currentIdx].answer;
@@ -103,9 +110,11 @@ export default {
       this.updateBackButton();
       this.updateNextButton();
     },
+
     iterOptions() {
       return this.itemStatus.item.optTexts.map((optText, index) => [index, optText]);
     },
+
     getScaleMarks() {
       const marks = {};
       this.itemStatus.item.optTexts.forEach((optText, index) => {
@@ -113,6 +122,7 @@ export default {
       });
       return marks;
     },
+
     clickNext() {
       // Last update still in progress
       if (!this.showPanel) {
@@ -139,6 +149,7 @@ export default {
         }
       }
 
+      // Save current item status
       this.showPanel = false;
       item.answer = this.itemStatus.answer;
       item.refilled = this.itemStatus.refilled;
@@ -154,6 +165,7 @@ export default {
         item.answerValue = item.optValues[item.answer];
       }
 
+      // Trigger submission or navigation
       if (this.currentIdx === this.items.length - 1) {
         this.submit();
       } else {
@@ -161,24 +173,28 @@ export default {
           this.currentIdx++;
           this.updateItem();
           this.showPanel = true;
-        }, 300);
+        }, this.settings.itemInterval);
       }
     },
+
     autoNext() {
       if (this.settings.allowAutoNext && this.currentIdx < this.items.length - 1 && !this.itemStatus.refilled) {
         this.clickNext();
       }
     },
+
     clickBack() {
       if (this.currentIdx > 0) {
         this.currentIdx--;
         this.updateItem();
       }
     },
+
     transformAnswer(answer) {
       return isProxy(answer) ? [...answer]
         : (answer === undefined ? null : answer);
     },
+
     submit() {
       const results = this.items.map(item => ({
         title: item.title,
