@@ -109,6 +109,7 @@ export default {
       this.updateTitle();
       this.updateBackButton();
       this.updateNextButton();
+      document.getElementById('main-inner').scrollTop = 0;
     },
 
     iterOptions() {
@@ -185,8 +186,12 @@ export default {
 
     clickBack() {
       if (this.currentIdx > 0) {
-        this.currentIdx--;
-        this.updateItem();
+        this.showPanel = false;
+        setTimeout(() => {
+          this.currentIdx--;
+          this.updateItem();
+          this.showPanel = true;
+        }, this.settings.itemInterval);
       }
     },
 
