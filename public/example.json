@@ -16,7 +16,14 @@
         },
         {
             "type": "text",
-            "title": "Lont title: lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+            "title": "Text with an image",
+            "required": true,
+            "desc": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+            "img": "https://avatars.githubusercontent.com/u/47137731?v=4"
+        },
+        {
+            "type": "text",
+            "title": "Long title: lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
             "required": true,
             "desc": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
             "allowBack": false
