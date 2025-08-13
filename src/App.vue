@@ -236,8 +236,16 @@ export default {
         <el-container id="display-desc" v-if="itemStatus.item.desc">
           <el-text class="mx-1" size="large"><span v-html="itemStatus.item.desc"></span></el-text>
         </el-container>
+        <div id="display-img-container" v-if="itemStatus.item.img">
+          <el-image
+            :src="itemStatus.item.img"
+            :preview-src-list="[itemStatus.item.img]"
+            style="width: 95%; height: 15em;"
+            fit="contain"
+          />
+        </div>
 
-        <el-main id="display-content" :class="{ nodesc: !itemStatus.item.desc }">
+        <el-main id="display-content" :class="{ nodesc: !(itemStatus.item.desc || itemStatus.item.img) }">
           <template v-if="itemStatus.item.type === 'text'">
             <el-input v-model="itemStatus.answer" @keyup.enter="clickNext" autosize autofocus
               :placeholder="lang[settings.lang].input" />
@@ -320,6 +328,11 @@ export default {
   width: 95%;
   margin: 0ex auto 0ex 2ex;
   padding-top: 0ex;
+}
+
+#display-img-container {
+  text-align: center;
+  margin-top: 2ex;
 }
 
 #display-buttons {
